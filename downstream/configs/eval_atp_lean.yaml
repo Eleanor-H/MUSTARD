@@ -1,0 +1,65 @@
+
+model_name_or_path: !env ${WORK_DIR}/model_hub/gpt2-large
+model_type: !env ${WORK_DIR}/model_hub/gpt2-large
+model_class: GPT2LMHeadModel
+dec_names_path: !env ${WORK_DIR}/data/lean/mathlib/test.names
+
+# search configuration
+search_method: bfs
+n_retry: 0
+try_intros: True
+use_tidy: False
+use_value_function: False
+prompt_mode: 1
+global_timeout: 60
+step_timeout: 30
+n_success_proof: 1
+accumulate_log_prob: True
+disable_global_timeout: False
+global_timeout_seconds: 300
+pass_at: 1
+
+# other
+debug: False
+verbose: False
+output_dir: !env ${WORK_DIR}/result/mustard/infer_atp_mathlib_gpt2
+lean_gym_dir: !env ${WORK_DIR}/package/lean_gym
+expert_iter_path: !env ${WORK_DIR}/output/expert_iteration_outputs/
+
+
+# generator configuration
+decoding_method: sampling
+temperature: 1.0
+max_seq_length: 1024
+topk: 0.0
+topp: 1.0
+repetition_penalty: 1.0
+n_expansion: 8
+max_search_steps: 128
+max_proof_steps: 30
+
+# value function
+value_function_type: binary
+value_function_temperature: 1.0
+random_value: False
+value_function_model_type: gpt
+value_function_model_name_or_path: ""
+
+# beam search
+beam_size: 1
+use_beam_search: False
+
+
+# skip step
+use_skip: True
+dummy: False
+use_dummy_tactic_generator: False
+
+# re expandsion
+re_const: 1.0
+const_exp: 1.0
+c_prime: 1.0
+use_max_q: True
+
+create_gt_rlhf_data: False
+return_mean_logprob: True

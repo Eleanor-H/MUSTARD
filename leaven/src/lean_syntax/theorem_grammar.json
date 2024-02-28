@@ -1,0 +1,1096 @@
+{
+    "name": "Lean",
+    "scopeName": "theorem",
+    "patterns": [
+        {
+            "begin": "/-", "end": "-/", "name": "comment.block.documentation"
+        },
+        {
+            "patterns": [
+                {
+                    "begin": "@\\[",
+                    "end": "\\]",
+                    "patterns": [
+                        {
+                            "include": "#quantifiers"
+                        }
+                    ],
+                    "name": "storage.modifier"
+                },
+                {
+                    "match": "\\b(?<!\\.)(reserve|local|private|meta|mutual|protected|noncomputable)(?!\\.)\\b",
+                    "name": "keyword.control.definition.modifier"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(theorem|lemma)\\b\\s+((\\{)([^}]*)(\\}))?",
+                    "patterns": [
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#type"
+                                },
+                                {
+                                    "begin": "\\b(?<!\\.)(have|haveI)(?!\\.)\\b",
+                                    "patterns": [
+                                        {
+                                            "include": "#constructor"
+                                        },
+                                        {
+                                            "include": "#paren"
+                                        },
+                                        {
+                                            "begin": ":(?!=)",
+                                            "patterns": [
+                                                {
+                                                    "match": "\\|((?:[^:\\|]|:[^=])+)\\|",
+                                                    "match_first": true,
+                                                    "soft_ending": true
+                                                }
+                                            ],
+                                            "end": "(?=:=)"
+                                        }
+                                    ],
+                                    "end": ":="
+                                },
+                                {
+                                    "begin": "\\b(?<!\\.)(let|letI)(?!\\.)\\b",
+                                    "soft_ending": true,
+                                    "patterns": [
+                                        {
+                                            "include": "#constructor"
+                                        },
+                                        {
+                                            "include": "#paren"
+                                        }
+                                    ],
+                                    "end": "\\b(?<!\\.)(in)(?!\\.)\\b|:="
+                                },
+                                {
+                                    "begin": ",",
+                                    "end": ":="
+                                },
+                                {
+                                    "begin": ",",
+                                    "end": "←"
+                                },
+                                {
+                                    "match": "\\|((?:[^:\\|]|:[^=])+)\\|",
+                                    "match_first": true,
+                                    "soft_ending": true
+                                }
+                            ],
+                            "end": "(?=:=|\\|)"
+                        }
+                    ],
+                    "end": "(?=:=|\\|)",
+                    "name": "theorem.info"
+                }
+            ]
+        },
+        {
+            "include": "#type"
+        },
+        {
+            "include": "#proof_block"
+        }
+    ],
+    "repository": {
+        "proof_block": {
+            "patterns": [
+                {
+                    "begin": "(\\|)",
+                    "end": "$",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": "\\[",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "\\]"
+                        },
+                        {
+                            "contentName": "proof_block",
+                            "begin": "(:=)",
+                            "end": "(?=$|\\|)",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "begin": "(:=)",
+                    "end": "(?=$)",
+                    "soft_ending": true,
+                    "contentName": "proof_block",
+                    "patterns": [
+                        {
+                            "include": "#term_block"
+                        }
+                    ]
+                }
+            ]
+        },
+        "term_block": {
+            "patterns": [
+                {
+                    "match": " repeat { sorry } ",
+                    "name": "sorry"
+                },
+                {
+                    "match": "(,|;)",
+                    "name": "separator"
+                },
+                {
+                    "include": "#paren"
+                },
+                {
+                    "include": "#lambda"
+                },
+                {
+                    "include": "#constructor"
+                },
+                {
+                    "include": "#paren"
+                },
+                {
+                    "include": "#calc"
+                },
+                {
+                    "include": "#match"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(if)(?!\\.)\\b",
+                    "name": "term_block",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "begin": ":",
+                            "end": "(?=\\b(?<!\\.)(then)(?!\\.)\\b)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        {
+                            "begin": "\\b(?<!\\.)(then)(?!\\.)\\b",
+                            "contentName": "term_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=\\b(?<!\\.)(else)(?!\\.)\\b)"
+                        },
+                        {
+                            "begin": "\\b(?<!\\.)(else)(?!\\.)\\b",
+                            "contentName": "term_block",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "#just_matching_upper_ending"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(assume)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(suffices)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "(,|;)\\b(?<!\\.)(show)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(have|haveI|replace)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "begin": ":(?!=)",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(:=|,|;))"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":=",
+                            "soft_ending": true,
+                            "contentName": "have_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=(,|\\b(?<!\\.)(in)(?!\\.)\\b|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(let|letI)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ],
+                    "end": "(?=(,|\\b(?<!\\.)(in)(?!\\.)\\b|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(in)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "contentName": "term_block",
+                    "patterns": [
+                        {
+                            "include": "#term_block"
+                        }
+                    ],
+                    "end": "#just_matching_upper_ending"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(from)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "contentName": "from_block",
+                    "patterns": [
+                        {
+                            "include": "#term_block"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(by)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "contentName": "by_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        }
+                    ],
+                    "end": "(?=,)"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(begin)(?!\\.)\\b",
+                    "contentName": "begin_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        }
+                    ],
+                    "end": "(\\b(?<!\\.)(end)\\b)"
+                }
+            ]
+        },
+        "lambda": {
+            "begin": "λ",
+            "end": "(,)",
+            "endCaptures": {
+                "0": {
+                    "name": "quantifiers.separator"
+                }
+            },
+            "soft_ending": true,
+            "patterns": [
+                {
+                    "include": "#constructor"
+                },
+                {
+                    "include": "#paren"
+                }
+            ]
+        },
+        "constructor": {
+            "begin": "⟨",
+            "name": "paren_block",
+            "contentName": "angle_block",
+            "patterns": [
+                {
+                    "include": "#constructor"
+                },
+                {
+                    "include": "#paren"
+                },
+                {
+                    "include": "#term_block"
+                }
+            ],
+            "end": "⟩"
+        },
+        "paren": {
+            "patterns": [
+                {
+                    "begin": "-- ",
+                    "end": "\\n", 
+                    "name": "line_comment"
+                },
+                {
+                    "begin": "/-", 
+                    "end": "-/", 
+                    "name": "block_comment"
+                },
+                {
+                    "begin": "\\(",
+                    "name": "paren_block",
+                    "contentName": "paren_block",
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "include": "#term_block"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "end": "(?=\\))",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        }
+                    ],
+                    "end": "\\)"
+                },
+                {
+                    "begin": "(?<!<)\\$(?!>)",
+                    "contentName": "paren_block",
+                    "name": "paren_block",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "include": "#term_block"
+                        }
+                    ],
+                    "end": "#just_matching_upper_ending"
+                },
+                {
+                    "begin": "\\{",
+                    "name": "paren_block",
+                    "contentName": "tactic_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        },
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "include": "#term_block"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "end": "(?=(\\}|:=))",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        },
+                        {
+                            "begin": ":=",
+                            "end": "(?=\\})",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ]
+                        }
+                    ],
+                    "end": "\\}"
+                },
+                {
+                    "begin": "\\[",
+                    "name": "paren_block",
+                    "contentName": "paren_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        },
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "include": "#term_block"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "end": "(?=\\])",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        }
+                    ],
+                    "end": "\\]"
+                },
+                {
+                    "begin": "\\⦃",
+                    "name": "paren_block",
+                    "contentName": "paren_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        },
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "include": "#term_block"
+                        },
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "end": "(?=⦄)",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        }
+                    ],
+                    "end": "\\⦄"
+                },
+                { "begin": "⁅", "patterns": [{"include": "#paren"}], "end": "⁆", "name": "paren_block"  },
+                { "begin": "⁽", "patterns": [{"include": "#paren"}], "end": "⁾", "name": "paren_block"  },
+                { "begin": "₍", "patterns": [{"include": "#paren"}], "end": "₎", "name": "paren_block"  },
+                { "begin": "〈", "patterns": [{"include": "#paren"}], "end": "〉", "name": "paren_block"  },
+                { "begin": "⟮", "patterns": [{"include": "#paren"}], "end": "⟯", "name": "paren_block"  },
+                { "begin": "⎴", "patterns": [{"include": "#paren"}], "end": "⎵", "name": "paren_block"  },
+                { "begin": "⟅", "patterns": [{"include": "#paren"}], "end": "⟆", "name": "paren_block"  },
+                { "begin": "⟦", "patterns": [{"include": "#paren"}], "end": "⟧", "name": "paren_block"  },
+                { "begin": "⟪", "patterns": [{"include": "#paren"}], "end": "⟫", "name": "paren_block"  },
+                { "begin": "⦃", "patterns": [{"include": "#paren"}], "end": "⦄", "name": "paren_block"  },
+                { "begin": "〈", "patterns": [{"include": "#paren"}], "end": "〉", "name": "paren_block"  },
+                { "begin": "《", "patterns": [{"include": "#paren"}], "end": "》", "name": "paren_block"  },
+                { "begin": "‹", "patterns": [{"include": "#paren"}], "end": "›", "name": "paren_block"  },
+                { "begin": "«", "patterns": [{"include": "#paren"}], "end": "»", "name": "paren_block"  },
+                { "begin": "「", "patterns": [{"include": "#paren"}], "end": "」", "name": "paren_block"  },
+                { "begin": "『", "patterns": [{"include": "#paren"}], "end": "』", "name": "paren_block"  },
+                { "begin": "【", "patterns": [{"include": "#paren"}], "end": "】", "name": "paren_block"  },
+                { "begin": "〔", "patterns": [{"include": "#paren"}], "end": "〕", "name": "paren_block"  },
+                { "begin": "〖", "patterns": [{"include": "#paren"}], "end": "〗", "name": "paren_block"  },
+                { "begin": "〚", "patterns": [{"include": "#paren"}], "end": "〛", "name": "paren_block"  },
+                { "begin": "︵", "patterns": [{"include": "#paren"}], "end": "︶", "name": "paren_block"  },
+                { "begin": "︷", "patterns": [{"include": "#paren"}], "end": "︸", "name": "paren_block"  },
+                { "begin": "︹", "patterns": [{"include": "#paren"}], "end": "︺", "name": "paren_block"  },
+                { "begin": "︻", "patterns": [{"include": "#paren"}], "end": "︼", "name": "paren_block"  },
+                { "begin": "︽", "patterns": [{"include": "#paren"}], "end": "︾", "name": "paren_block"  },
+                { "begin": "︿", "patterns": [{"include": "#paren"}], "end": "﹀", "name": "paren_block"  },
+                { "begin": "﹁", "patterns": [{"include": "#paren"}], "end": "﹂", "name": "paren_block"  },
+                { "begin": "﹃", "patterns": [{"include": "#paren"}], "end": "﹄", "name": "paren_block"  },
+                { "begin": "﹙", "patterns": [{"include": "#paren"}], "end": "﹚", "name": "paren_block"  },
+                { "begin": "﹛", "patterns": [{"include": "#paren"}], "end": "﹜", "name": "paren_block"  },
+                { "begin": "﹝", "patterns": [{"include": "#paren"}], "end": "﹞", "name": "paren_block"  },
+                { "begin": "（", "patterns": [{"include": "#paren"}], "end": "）", "name": "paren_block"  },
+                { "begin": "［", "patterns": [{"include": "#paren"}], "end": "］", "name": "paren_block"  },
+                { "begin": "｛", "patterns": [{"include": "#paren"}], "end": "｝", "name": "paren_block"  },
+                { "begin": "｢", "patterns": [{"include": "#paren"}], "end": "｣", "name": "paren_block"  },
+                {
+                    "include": "#lambda"
+                }
+            ]
+        },
+        "tactic_block": {
+            "patterns": [
+                {
+                    "begin": "\\{",
+                    "contentName": "tactic_block",
+                    "patterns": [
+                        {
+                            "include": "#tactic_block"
+                        }
+                    ],
+                    "end": "\\}"
+                },
+                {
+                    "match": "transitivity,"
+                },
+                {
+                    "match": "(,)",
+                    "name": "separator"
+                },
+                {
+                    "include": "#term_block"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(refine_struct)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "begin": "\\{",
+                            "patterns": [
+                                {
+                                    "include": "#constructor"
+                                },
+                                {
+                                    "include": "#paren"
+                                },
+                                {
+                                    "begin": ":=",
+                                    "contentName": "term_block",
+                                    "soft_ending": true,
+                                    "end": "(,|;)",
+                                    "patterns": [
+                                        {
+                                            "include": "#term_block"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "end": "\\}"
+                        },
+                        {
+                            "include": "#term_block"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(exact)(?!\\.)\\b",
+                    "contentName": "term_block",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#term_block"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(guard_hyp_strict|guard_hyp'|match_hyp)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(h_generalize|generalize)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(,|;|with))"
+                        },
+                        {
+                            "begin": "with",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(suffices)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=,)"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(set)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":=",
+                            "soft_ending": true,
+                            "contentName": "term_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=with)"
+                        },
+                        {
+                            "begin": "with",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(cases|rcases)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": "with",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=,)"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(obtain)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": "\\|",
+                            "soft_ending": true,
+                            "end": "(?=:=)",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ]
+                        },
+                        {
+                            "begin": ":(?!=)",
+                            "soft_ending": true,
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ],
+                            "end": "(?=(:=|,))"
+                        },
+                        {
+                            "begin": ":=",
+                            "soft_ending": true,
+                            "contentName": "term_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(guard_expr_strict)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        },
+                        {
+                            "begin": ":=",
+                            "soft_ending": true,
+                            "contentName": "term_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=(,|;))"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(rw|simp)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#constructor"
+                        },
+                        {
+                            "include": "#paren"
+                        }
+                    ],
+                    "end": "(?=(,|;))"
+                },
+                {
+                    "include": "#calc"
+                }
+            ]
+        },
+        "type": {
+            "patterns": [
+                {
+                    "include": "#paren"
+                },
+                {
+                    "match": "\\|(?:[^:\\|]|:[^=])+\\|",
+                    "soft_ending": true
+                },
+                {
+                    "begin": "∃|∀|∫|∮|Σ|∑|Π|∏|⨅|⨆|Πₗ|π₁⁻¹|∯|⨍|∀ᵐ|π₁|∫⁻|⨆|∃|∑'|∫|∫|∃ᵐ|Σ|⨂ₜ|∫|∀|∀ᶠ|Σₗ|π₂|⋂|∃!|Π₀|Σₗ'|Σ'|⨅|∀ᵐ|∮|∃ᶠ|⋃",
+                    "match_first": true,
+                    "soft_ending": true,
+                    
+                    "end": ",",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": "\\b(?<!\\.)(in)(?!\\.)\\b",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }],
+                            "end": "(?=,)"
+                        }
+                    ]
+                },
+                {
+                    "begin": "(?<!<)\\$(?!>)",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ],
+                    "end": "#just_matching_upper_ending"
+                },
+                {
+                    "begin": "λ",
+                    "end": "(,)",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ],
+                    "soft_ending": true
+                }
+            ]
+        },
+        "calc": {
+            "patterns": [
+                {
+                    "begin": "\\b(?<!\\.)(calc)(?!\\.)\\b",
+                    "soft_ending": true,
+                    "name": "calc_block",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "soft_ending": true,
+                            "contentName": "proof_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(\\.\\.\\.|(?=,))"
+                        }
+                    ],
+                    "end": "(?=,)"
+                },
+                {
+                    "begin": "(\\.\\.\\.)",
+                    "name": "isolated_calc_block",
+                    "soft_ending": true,
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "soft_ending": true,
+                            "contentName": "proof_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "(?=(\\.\\.\\.|,))"
+                        }
+                            ],
+                    "end": "(?=,)"
+                }
+            ]
+        },
+        "calc_rewrite": {
+            "patterns": [
+                {
+                    "begin": "\\b(?<!\\.)(calc)(?!\\.)\\b",
+                    "name": "calc_block",
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        },
+                        {
+                            "begin": ":",
+                            "soft_ending": true,
+                            "contentName": "proof_block",
+                            "patterns": [
+                                {
+                                    "include": "#term_block"
+                                }
+                            ],
+                            "end": "\\.\\.\\."
+                        }
+                    ],
+                    "end": "$"
+                }
+            ]
+        },
+        "match": {
+            "begin": "\\b(?<!\\.)(match)(?!\\.)\\b",
+            "patterns": [
+                {
+                    "include": "#constructor"
+                },
+                {
+                    "include": "#paren"
+                },
+                {
+                    "begin": "\\b(?<!\\.)(with)(?!\\.)\\b",
+                    "contentName": "proof_block",
+                    "patterns": [
+                        {
+                            "patterns": [
+                                {
+                                    "begin": "(\\|)",
+                                    "end": "(?=\\b(?<!\\.)(end)(?!\\.)\\b)",
+                                    "patterns": [
+                                        {
+                                            "include": "#constructor"
+                                        },
+                                        {
+                                            "include": "#paren"
+                                        },
+                                        {
+                                            "begin": "\\[",
+                                            "name": "paren_block",
+                                            "patterns": [
+                                                {
+                                                    "include": "#constructor"
+                                                },
+                                                {
+                                                    "include": "#paren"
+                                                },
+                                                {
+                                                    "include": "#term_block"
+                                                }
+                                            ],
+                                            "end": "\\]"
+                                        },
+                                        {
+                                            "contentName": "proof_block",
+                                            "begin": "(:=)",
+                                            "end": "(?=\\||\\b(?<!\\.)(end)(?!\\.)\\b)",
+                                            "patterns": [
+                                                {
+                                                    "include": "#term_block"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "begin": "(:=)",
+                                    "end": "(?=\\b(?<!\\.)(end)(?!\\.)\\b)",
+                                    "soft_ending": true,
+                                    "contentName": "proof_block",
+                                    "patterns": [
+                                        {
+                                            "include": "#term_block"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "end": "(?=\\b(?<!\\.)(end)(?!\\.)\\b)"
+                }
+            ],
+            "end": "\\b(?<!\\.)(end)(?!\\.)\\b"
+        }
+    }
+}

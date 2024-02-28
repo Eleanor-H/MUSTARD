@@ -1,0 +1,440 @@
+{
+    "name": "Lean",
+    "scopeName": "source",
+    "fileTypes": ["lean"],
+    "comments": "Lean is full of types; `x < 0` is a type, as are many more complex statements. Highlighting these is probably unhelpful, so we use `meta.type` instead of `entity.name.type` to prevent the type color being used everywhere.",
+    "patterns": [
+      {"include": "#comments"},
+      {
+        "begin": "\\b(?<!\\.)(inductive|coinductive|structure|theorem|abbreviation|lemma|definition|def|class)\\b\\s+((\\{)([^}]*)(\\}))?",
+        "beginCaptures": {
+          "1": {"name": "codeblock.keyword.definitioncommand"},
+          "2": {"name": "meta.binder.universe"},
+          "3": {"name": "punctuation.definition.binder.universe.begin"},
+          "4": {"name": "variable.constant.universe"},
+          "5": {"name": "punctuation.definition.binder.universe.end"}
+        },
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#definitionName"}
+        ],
+        "end": "(?=\\bwith\\b|\\bextends\\b|:|\\||\\.|\\(|\\[|\\{|⦃)",
+        "name": "meta.definitioncommand"
+      },
+      {
+        "begin": "\\b(?<!\\.)(postfix|prefix|infix|infixl|infixr|notation)\\b\\s+((\\{)([^}]*)(\\}))?",
+        "beginCaptures": {
+          "1": {"name": "codeblock.keyword.definitioncommand"},
+          "2": {"name": "meta.binder.universe"},
+          "3": {"name": "punctuation.definition.binder.universe.begin"},
+          "4": {"name": "variable.constant.universe"},
+          "5": {"name": "punctuation.definition.binder.universe.end"}
+        },
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#definitionName"},
+          { "begin": "`", "end": "`"}
+        ],
+        "end": "(?=(?:\\s*:|\\s*$)\\s*)",
+        "name": "meta.definitioncommand"
+      },
+      {"include": "#block"},
+      {
+        "match": "\\b(?<!\\.)(end)(?!\\.)\\b",
+        "name": "keyword.end"
+      },
+      {
+        "comment": "Commands which accept a definition",
+        "begin": "\\b(?<!\\.)(example|instance)(?!\\.)\\b\\s+",
+        "beginCaptures": {
+          "1": {"name": "codeblock.keyword.definitioncommand"}
+        },
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#definitionName"},
+          {"match": ","}
+        ],
+        "end": "(?=:|\\||\\.|\\(|\\[|\\{|⦃)",
+        "name": "meta.definitioncommand"
+      },
+      {
+        "begin": "\\b(?<!\\.)(match|begin)(?!\\.)\\b\\s+",
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#block"}
+        ],
+        "end": "\\b(?<!\\.)(end)\\b",
+        "name": "meta.block"
+      },
+      {
+        "comment": "Commands which accept no definition",
+        "begin": "\\b(?<!\\.)(axiom|axioms|constant)(?!\\.)\\b\\s+(\\{[^}]*\\})?",
+        "beginCaptures": {
+          "1": {"name": "codeblock.keyword.definitioncommand"}
+        },
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#definitionName"},
+          {"match": ","}
+        ],
+        "end": "($|(?=:|\\||\\.|\\(|\\[|\\{|⦃))",
+        "name": "meta.definitioncommand"
+      },
+      { "begin": "@\\[",
+        "end": "\\]\\s*",
+        "patterns": [
+          {"include": "#block"},
+          {"include": "#comments"},
+          {"include": "#expressions"}
+        ],
+        "name": "storage.modifier"},
+      {
+        "match": "\\b(?<!\\.)(reserve|local|private|meta|mutual|protected|noncomputable)(?!\\.)\\b\\s*",
+        "name": "keyword.control.definition.modifier"
+      },
+      { "match": "#print\\s+(def|definition|inductive|instance|structure|axiom|axioms|class)\\b", "name": "codeblock.keyword.command" },
+      { "match": "#(print|eval|reduce|check|help|exit|find|where|compile|unify|lint|lint_mathlib|lint_all|list_linters)\\b", "name": "codeblock.keyword.command" },
+      { "begin": "\\battribute\\b\\s*\\[",
+      "end": "\\]\\s*",
+      "patterns": [
+        {"include": "#comments"},
+          {"include": "#expressions"}
+      ],
+      "name": "storage.modifier.attribute"},
+      {
+        "match": "\\b(?<!\\.)(import|export|prelude|theory|definition|def|abbreviation|instance|constant|lemma|theorem|example|open|axiom|inductive|coinductive|structure|universe|universes|alias|precedence|namespace|localized|open_locale|section|set_option|include|omit|class|run_cmd|restate_axiom|init_quotient|declare_trace|add_key_equivalence|add_decl_doc|library_note|add_hint_tactic|add_tactic_doc|setup_tactic_parser|mk_simp_attribute|copy_doc_string|def_replacer|import_private|initialize_simps_projections|mk_iff_of_inductive_prop|reassoc_axiom|restate_axiom|run_parser|setup_tactic_parser)(?!\\.)\\b",
+        "name": "codeblock.keyword.declaration"
+      },
+      {
+        "match": "\\b(?<!\\.)(using_well_founded)(?!\\.)\\b",
+        "name": "commands"
+      },
+      {
+        "match": "\\b(?<!\\.)(renaming|hiding|exposing|with|extends|raw)(?!\\.)\\b",
+        "name": "keyword.declaration"
+      },
+      { "match": "\\b(?<!\\.)(variable|variables|parameter|parameters|constants)(?!\\.)\\b",
+        "name": "codeblock.keyword.parameter"
+      },
+      { "include": "#expressions" }
+    ],
+    "repository": {
+      "expressions": {
+          "patterns": [
+            {
+              "begin": "\"", "end": "\"",
+              "beginCaptures": {"0": {"name": "punctuation.definition.string.begin"}},
+              "endCaptures": {"0": {"name": "punctuation.definition.string.end"}},
+              "name": "string.quoted.double",
+              "patterns": [
+                {"match": "\\\\[\\\\\"nt']", "name": "constant.character.escape"},
+                {"match": "\\\\x[0-9A-Fa-f][0-9A-Fa-f]", "name": "constant.character.escape"},
+                {"match": "\\\\u[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]", "name": "constant.character.escape"}
+              ]
+            },
+            { "name": "string.quoted.single", "match": "'[^\\\\']'" },
+            { "name": "string.quoted.single", "match": "'(\\\\(x..|u....|.))'",
+              "captures": {"1": {"name": "constant.character.escape"}} },
+            { "match": "`+(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟](?:(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟0-9'ⁿ-₉ₐ-ₜᵢ-ᵪ])*",
+              "name": "entity.name" },
+            { "include": "#dashComment"},
+            { "include": "#blockComment"},
+            { "include": "#stringBlock"}
+          ]
+        },
+      "type_params": {
+        "name": "type_params",
+        "patterns": [
+          {
+            "begin": "\\(", "end": "\\)",
+            "comment": "Type annotations",
+            "name": "type_params",
+            "patterns" : [
+              { "begin": ":", "end": "(?=\\))",
+                "beginCaptures": {"0": {"name": "punctuation.separator.type"}},
+                "contentName": "type",
+                "patterns" : [
+                  {"include": "#quantifiers"},
+                  {"include": "#type_params"}
+                ]
+              },
+              { "include": "#quantifiers" }
+            ]
+          },
+          {
+            "begin": "\\[", "end": "\\]",
+            "comment": "Type annotations",
+            "name": "type_params",
+            "patterns" : [
+              { "begin": ":", "end": "(?=\\])",
+                "beginCaptures": {"0": {"name": "punctuation.separator.type"}},
+                "contentName": "type",
+                "patterns" : [
+                  {"include": "#quantifiers"},
+                  {"include": "#type_params"}
+                ]
+              },
+              { "include": "#quantifiers" }
+            ]
+          },
+          {
+            "begin": "\\{", "end": "\\}",
+            "comment": "Type annotations",
+            "name": "type_params",
+            "patterns" : [
+              { "begin": ":", "end": "(?=\\})",
+                "beginCaptures": {"0": {"name": "punctuation.separator.type"}},
+                "contentName": "type",
+                "patterns" : [
+                  {"include": "#quantifiers"},
+                  {"include": "#type_params"}
+                ]
+              },
+              { "include": "#quantifiers" }
+            ]
+          },
+          {
+            "begin": "⦃", "end": "⦄",
+            "comment": "Type annotations",
+            "name": "type_params",
+            "patterns" : [
+              { "begin": ":", "end": "(?=⦄)",
+                "beginCaptures": {"0": {"name": "punctuation.separator.type"}},
+                "contentName": "type",
+                "patterns" : [
+                  {"include": "#quantifiers"},
+                  {"include": "#type_params"}
+                ]
+              },
+              { "include": "#quantifiers" }
+            ]
+          }
+        ]
+      },
+      "dashComment": {
+        "begin": "(--)", "end": "$",
+        "beginCaptures": {"0": {"name": "punctuation.definition.comment"}},
+        "name": "comment.line.double-dash",
+        "patterns": [
+          {"include": "source.markdown"}
+        ]
+      },
+      "docComment": {
+        "begin": "/--", "end": "-/", "name": "comment.block.documentation",
+        "patterns": [
+          {"include": "source.markdown"},
+          {"include": "#blockComment"}
+        ]
+      },
+      "stringBlock": {
+        "begin": "/-\"", "end": "\"-/", "name": "comment.block.string",
+        "patterns": [
+          {"include": "source.markdown"},
+          {"include": "#blockComment"}
+        ]
+      },
+      "modDocComment": {
+        "begin": "(/-!)", 
+        "end": "-/", "name": "block.documentation",
+        "patterns": [
+          {"include": "source.markdown"},
+          {"include": "#blockComment"}
+        ]
+      },
+      "blockComment": {
+        "begin": "/-", "end": "-/", "name": "comment.block",
+        "patterns": [
+          {"include": "source.markdown"},
+          {"include": "#blockComment"}
+        ]
+      },
+      "comments": {
+        "patterns": [
+          {"include": "#dashComment"},
+          {"include": "#docComment"},
+          {"include": "#stringBlock"},
+          {"include": "#modDocComment"},
+          {"include": "#blockComment"},
+          {
+            "begin": "\"", "end": "\"",
+            "beginCaptures": {"0": {"name": "punctuation.definition.string.begin"}},
+            "endCaptures": {"0": {"name": "punctuation.definition.string.end"}},
+            "name": "string.quoted.double",
+            "patterns": [
+              {"match": "\\\\[\\\\\"nt']", "name": "constant.character.escape"},
+              {"match": "\\\\x[0-9A-Fa-f][0-9A-Fa-f]", "name": "constant.character.escape"},
+              {"match": "\\\\u[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]", "name": "constant.character.escape"}
+            ]
+          },
+          { "name": "string.quoted.single", "match": "'[^\\\\']'" },
+          { "name": "string.quoted.single", "match": "'(\\\\(x..|u....|.))'",
+            "captures": {"1": {"name": "constant.character.escape"}} }
+        ]
+      },
+      "notations": {
+        "begin": "\\b(?<!\\.)(postfix|prefix|infix|infixl|infixr|notation)\\b\\s+((\\{)([^}]*)(\\}))?",
+        "patterns": [
+          {"include": "#comments"},
+          {"include": "#definitionName"},
+          { "begin": "`", "end": "`"}
+        ],
+        "end": "(?=(?:\\s*:|\\s*$)\\s*)",
+        "name": "meta.definitioncommand"
+      },
+      "block": {
+        "patterns": [
+          { "match": "\\b(?<!\\.)(by|from|calc|this|do|suffices|in|at|let|obtain|have|haveI|using|exact|refine)(?!\\.)\\b" },
+          { "begin": "\\b(?<!\\.)(match)\\b\\s+",
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#notations"},
+            {"include": "#block"}
+          ], 
+          "end": "\\b(?<!\\.)(end)\\b" },
+          { "begin": "\\b(?<!\\.)(begin)\\b\\s+", 
+          "patterns": [
+              {"include": "#comments"},
+              {"match": ",\\s*", "name": "separator"},
+              {"include": "#block"},
+              {"include": "#notations"}
+            ], 
+          "end": "\\b(?<!\\.)(end)\\b", 
+          "contentName": "tactic_block" },
+          { "begin": "{\\s*", 
+          "patterns": [
+            {"include": "#comments"},
+            {"match": ",\\s*", "name": "separator"}, 
+            {"include": "#block"},
+            {"include": "#notations"}
+            ], 
+          "end": "}", 
+          "contentName": "paren_block" },
+          { "begin": "⟨\\s*", 
+          "patterns": [
+            {"include": "#comments"},
+            {"match": ",\\s*", "name": "separator"},
+            {"include": "#block"},
+            {"include": "#notations"}], 
+          "end": "⟩", 
+          "contentName": "paren_block" },
+          { "begin": "\\(\\s*", 
+          "patterns": [
+            {"include": "#comments"},
+            {"match": ",\\s*"},
+            {"include": "#block"},
+            {"include": "#notations"}], 
+          "end": "\\)", 
+          "contentName": "paren_block" },
+          { "begin": "\\[\\s*", 
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#block"},
+            {"include": "#notations"}
+            ], "end": "\\]", "contentName": "paren_block" },
+          { "include": "#silent_block" },
+          { "include": "#quantifiers" }
+        ]
+      },
+      "definitionName": {
+        "comment": "This regex matches the lean3 parser implementation here: https://github.com/leanprover-community/lean/blob/65ad4ffdb3abac75be748554e3cbe990fb1c6500/src/util/name.cpp#L28-L56. Note that unlike `#binderName`, `#definitionName` can contain dots.",
+        "patterns": [
+          { "match": "(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟](?:(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟0-9'ⁿ-₉ₐ-ₜᵢ-ᵪ])*(\\.(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟](?:(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟0-9'ⁿ-₉ₐ-ₜᵢ-ᵪ])*)*",
+            "name": "entity.name.function"},
+          { "begin": "«", "end": "»", "contentName": "entity.name.function"}
+        ]
+      },
+      "binderName": {
+        "patterns": [
+          { "match": "(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟](?:(?![λΠΣ])[_a-zA-Zα-ωΑ-Ωϊ-ϻἀ-῾℀-⅏𝒜-𝖟0-9'ⁿ-₉ₐ-ₜᵢ-ᵪ])*",
+            "name": "variable.parameter"},
+          { "begin": "«", "end": "»", "contentName": "variable.parameter"}
+        ]
+      },
+      "quantifiers": {
+        "begin": "\\s*(λ|∃|∀)",
+        "end": ",",
+        "soft_ending" : true,
+        "endCaptures": {"0": {"name": "quantifiers.separator"}},
+        "patterns": [
+          {"include": "#comments"},
+          { "include": "#silent_block" }
+        ]
+      },
+      "silent_block" : {
+        "patterns": [
+          {
+            "begin": "⟨",
+            "patterns": [
+              {"include": "#comments"},
+              {"include": "#silent_block"},
+              {"match": ",\\s*"}
+            ],
+            "end": "⟩"
+          },
+          {
+            "begin": "\\(",
+            "patterns": [
+              {"include": "#comments"},
+              {"include": "#silent_block"},
+              {"match": ",\\s*"}
+            ],
+            "end": "\\)"
+          },
+          {
+            "begin": "\\{",
+            "patterns": [
+              {"include": "#comments"},
+              {"include": "#silent_block"},
+              {"match": ",\\s*"}
+            ],
+            "end": "\\}"
+          },
+          {
+            "begin": "\\[",
+            "patterns": [
+              {"include": "#comments"},
+              {"include": "#silent_block"},
+              {"match": ",\\s*"}
+            ],
+            "end": "\\]"
+          },
+          { "begin": "⁅", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⁆"},
+          { "begin": "⁅", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⁆"},
+          { "begin": "⁽", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⁾"},
+          { "begin": "₍", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "₎"},
+          { "begin": "〈", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "〉"},
+          { "begin": "⟮", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⟯"},
+          { "begin": "⎴", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⎵"},
+          { "begin": "⟅", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⟆"},
+          { "begin": "⟦", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⟧"},
+          { "begin": "⟪", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⟫"},
+          { "begin": "⦃", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "⦄"},
+          { "begin": "〈", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "〉"},
+          { "begin": "《", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "》"},
+          { "begin": "‹", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "›"},
+          { "begin": "«", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "»"},
+          { "begin": "「", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "」"},
+          { "begin": "『", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "』"},
+          { "begin": "【", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "】"},
+          { "begin": "〔", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "〕"},
+          { "begin": "〖", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "〗"},
+          { "begin": "〚", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "〛"},
+          { "begin": "︵", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "︶"},
+          { "begin": "︷", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "︸"},
+          { "begin": "︹", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "︺"},
+          { "begin": "︻", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "︼"},
+          { "begin": "︽", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "︾"},
+          { "begin": "︿", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹀"},
+          { "begin": "﹁", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹂"},
+          { "begin": "﹃", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹄"},
+          { "begin": "﹙", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹚"},
+          { "begin": "﹛", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹜"},
+          { "begin": "﹝", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "﹞"},
+          { "begin": "（", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "）"},
+          { "begin": "［", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "］"},
+          { "begin": "｛", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "｝"},
+          { "begin": "｢", "patterns": [{"include": "#comments"},{"include": "#block"}], "end": "｣"}
+        ]
+      }
+    }
+  }
