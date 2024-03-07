@@ -1,4 +1,3 @@
-# from params import params_random as params
 from params import params_custom as params
 from util_generate import Generator
 

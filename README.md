@@ -1,4 +1,4 @@
-# MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data [[pdf]](https://eleanor-h.github.io/featured_publication/anonymous-2023-mustard/anonymous-2023-mustard.pdf)
+# MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data [[pdf]](https://arxiv.org/pdf/2402.08957.pdf)
 
 <br>
 <div align="center">
