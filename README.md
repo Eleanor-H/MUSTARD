@@ -1,16 +1,14 @@
-# MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data [[pdf]](https://arxiv.org/pdf/2402.08957.pdf)
+# <img src="images/codabench-logo-challenge-mustard_v5.png" width="7%"> MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data (ICLR 2024 Spotlight) [[PDF]](https://arxiv.org/pdf/2402.08957.pdf) [[CHALLENGE]](https://sites.google.com/view/ai4mathworkshopicml2024/challenges)
+
 
 <br>
 <div align="center">
-
-
 <img src="images/mustard.png" width="100%">
-
 </div>
 <br>
 
 
-MUSTARD is a data synthesis framework providing theorem and proof data with informal theorem, informal proof, formal theorem (in Lean), and formal proof (in Lean).  The project currently supports [Lean 3](https://leanprover-community.github.io/lean3/). 
+> MUSTARD is a data synthesis framework providing theorem and proof data with informal theorem, informal proof, formal theorem (in Lean), and formal proof (in Lean).  The project currently supports [Lean 3](https://leanprover-community.github.io/lean3/). 
 
 
 ### MUSTARD benefits Math Word Problems (MWP).
@@ -108,11 +106,12 @@ python generate.py
 
 
 # 🍯 MUSTARDSAUCE dataset
-**Please download the MUSTARDSAUCE dataset [here](https://drive.google.com/file/d/1yIVAVqpkC2Op7LhisG6BJJ_-MavAMr1B/view?usp=sharing).**
+**Please download the MUSTARDSAUCE dataset [HERE](https://drive.google.com/file/d/1yIVAVqpkC2Op7LhisG6BJJ_-MavAMr1B/view?usp=sharing).**
 
 <div align="center">
 <img src="images/fig4_steps.png" width="100%">
 </div>
+<br>
 
 # 🍯 Fine-tuning & Inference
 
