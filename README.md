@@ -13,8 +13,31 @@
 MUSTARD is a data synthesis framework providing theorem and proof data with informal theorem, informal proof, formal theorem (in Lean), and formal proof (in Lean).  The project currently supports [Lean 3](https://leanprover-community.github.io/lean3/). 
 
 
+### MUSTARD benefits Math Word Problems (MWP).
+<!-- <br> -->
+<div align="center">
+<img src="images/tab4_mwp.png" width="100%">
+</div>
+<!-- <br> -->
 
-# 🌱 Preparation
+### MUSTARD benefits Automated Theorem Proving (ATP).
+<!-- <br> -->
+<div align="center">
+<img src="images/tab5_atp.png" width="100%">
+</div>
+<!-- <br> -->
+
+### MUSTARD is effective with Llama 2-70b.
+<!-- <br> -->
+<div align="center">
+<img src="images/tab28_70b.png" width="100%">
+</div>
+<!-- <br> -->
+
+
+<br>
+
+# 🍯 Preparation
 ### Requirements
 * python 3.9
 * [elan](https://github.com/leanprover/elan?tab=readme-ov-file#installation)
@@ -48,7 +71,7 @@ LLM_API_KEY = {
 ```
 
 
-# 🌱 Data Synthesis
+# 🍯 Data Synthesis
 Please first fill in `params_custom` in `params.py` as follows:
 ```
 params_custom = MustardArgs(
@@ -84,9 +107,12 @@ python generate.py
 ```
 
 
-# 🍯 MUSTARDSauce
-Please download the MUSTARDSauce dataset [here](https://drive.google.com/file/d/1yIVAVqpkC2Op7LhisG6BJJ_-MavAMr1B/view?usp=sharing). 
+# 🍯 MUSTARDSAUCE dataset
+**Please download the MUSTARDSAUCE dataset [here](https://drive.google.com/file/d/1yIVAVqpkC2Op7LhisG6BJJ_-MavAMr1B/view?usp=sharing).**
 
+<div align="center">
+<img src="images/fig4_steps.png" width="100%">
+</div>
 
 # 🍯 Fine-tuning & Inference
 
