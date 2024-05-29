@@ -788,7 +788,7 @@ You must respond in the following format:
                     
                     # infos = self.server.verify_lean_file(formal_ans)
                     try:
-                        infos = self._verify(informal_ans)
+                        infos = self._verify(formal_ans)
                     except:
                         infos = {'error': 'ERROR: The lean code does not halt. Skipping this case.', 'open_states': []}
                         print(infos['error'])
@@ -808,7 +808,7 @@ You must respond in the following format:
                     
                             # infos = self.server.verify_lean_file(formal_ans)
                             try:
-                                infos = self._verify(informal_ans)
+                                infos = self._verify(formal_ans)
                             except:
                                 infos = {'error': 'ERROR: The lean code does not halt. Skipping this case.', 'open_states': []}
                                 print(infos['error'])
